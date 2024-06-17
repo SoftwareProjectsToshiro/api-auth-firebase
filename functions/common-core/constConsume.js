@@ -1,6 +1,6 @@
 "use strict"
 
-const {auth} = require("../fb")
+const {auth, db} = require("../fb")
 
 const addDataByEmail = async (req, res) => {
     const data = req.body;
@@ -8,10 +8,35 @@ const addDataByEmail = async (req, res) => {
         email: data.email,
         password: data.password,
     }).then(() => {
-        auth.generateEmailVerificationLink(data.email)
-        res.json({
-            msg: `Usuario ${data.email} creado con éxito`
-        });
+        const actionCodeSettings = {
+            url: 'https://react-web-c4127.firebaseapp.com/__/auth/action?mode=action&oobCode=code',
+            handleCodeInApp: true
+        };    
+               
+        auth.generateEmailVerificationLink(data.email, actionCodeSettings).then((link) => {
+
+            db.collection('mail').add({
+                to: data.email,
+                message: {
+                    subject: 'Bienvenido a Travel Trux',
+                    text: `¡Hola!\n\nGracias por unirte a Travel Trux. Para verificar tu cuenta, por favor haz clic en el siguiente enlace:\n${link}\n\nSi no creaste una cuenta en Travel Trux, por favor ignora este correo.\n\nSaludos,\nEl equipo de Travel Trux`,
+                    html: `
+                        <div style="font-family: Arial, sans-serif; line-height: 1.6;">
+                            <h2 style="color: #333;">¡Bienvenido a Travel Trux!</h2>
+                            <p>Gracias por unirte a Travel Trux. Para verificar tu cuenta, por favor haz clic en el siguiente enlace:</p>
+                            <p><a href="${link}" style="color: #1a73e8; text-decoration: none;">Verificar cuenta</a></p>
+                            <p>Si no creaste una cuenta en Travel Trux, por favor ignora este correo.</p>
+                            <p>Saludos,<br>El equipo de Travel Trux</p>
+                        </div>
+                    `
+                }
+            }).then(() => {
+                console.log('Email sent to ' + data.email);
+            })
+            res.json({
+                msg: `Usuario ${data.email} creado con éxito`
+            });
+        })
     }).catch((err) => {
         res.status(400).json({
             msg: `Error al crear usuario ${data.email}`,
