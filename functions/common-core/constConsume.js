@@ -8,6 +8,7 @@ const addDataByEmail = async (req, res) => {
         email: data.email,
         password: data.password,
     }).then(() => {
+        auth.generateEmailVerificationLink(data.email)
         res.json({
             msg: `Usuario ${data.email} creado con éxito`
         });
