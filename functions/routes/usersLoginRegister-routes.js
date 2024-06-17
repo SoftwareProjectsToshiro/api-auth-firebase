@@ -3,14 +3,14 @@ const express = require("express");
 const {
     addUser,
     login,
-    updateEmail
+    updateDataEmail
 } = require("../controllers/userController");
 
 const router = express.Router();
 
 router.post("/register", addUser);
 router.post("/login", login);
-router.post("/update-email", updateEmail);
+router.post("/update-email", updateDataEmail);
 
 module.exports = {
     routes: router,

@@ -10,12 +10,12 @@ const login = async (req, res) => {
     await  loginUser(req, res);
 }
 
-const updateEmail = async (req, res) => {
+const updateDataEmail = async (req, res) => {
     await updateEmail(req, res);
 }
 
 module.exports = {
     addUser,
     login,
-    updateEmail
+    updateDataEmail
 }
