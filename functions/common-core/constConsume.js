@@ -64,7 +64,31 @@ const loginUser = async (req, res) => {
     });
 }
 
+const updateEmail = async (req, res) => {
+    const email = req.body;
+    auth.getUserByEmail(email).then((userRecord) => {
+        auth.updateUser(userRecord.uid, {
+            email: email
+        }).then(() => {
+            res.json({
+                msg: `Email actualizado a ${email}`
+            });
+        }).catch((err) => {
+            res.status(400).json({
+                msg: `Error al actualizar email a ${email}`,
+                err
+            });
+        });
+    }).catch((err) => {
+        res.status(400).json({
+            msg: `Error al buscar usuario ${email}`,
+            err
+        });
+    });
+}
+
 module.exports = {
     addDataByEmail,
-    loginUser
+    loginUser,
+    updateEmail
 };
