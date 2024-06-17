@@ -66,9 +66,10 @@ const loginUser = async (req, res) => {
 
 const updateEmail = async (req, res) => {
     const email = req.body.email;
+    const newEmail = req.body.new_email;
     auth.getUserByEmail(email).then((userRecord) => {
         auth.updateUser(userRecord.uid, {
-            email: email
+            email: newEmail
         }).then(() => {
             res.json({
                 msg: `Email actualizado a ${email}`
